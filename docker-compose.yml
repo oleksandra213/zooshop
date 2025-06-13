@@ -1,0 +1,35 @@
+version: '3.8' 
+
+services:
+  webapp: 
+    build: . 
+    ports:
+      - "3000:3000" # Мапує (перенаправляє) порт 3000 хост-машини (EC2 інстанса) на порт 3000 контейнера webapp
+    environment:
+      # Змінні середовища, які будуть доступні всередині контейнера 'webapp'.
+      # Вони повинні відповідати тим, що ваш Node.js додаток очікує (наприклад, з process.env)
+      DB_HOST: db # Ім'я сервісу бази даних ('db') в мережі Docker Compose, використовується як хост для підключення
+      DB_PORT: 5432 # Стандартний порт PostgreSQL
+      DB_USER: postgres
+      DB_PASSWORD: hekwey.s
+      DB_DATABASE: zooshop
+      JWT_SECRET: super_secret_jwt_key_!@#$1234567890ASDFGHJKL
+    depends_on:
+      - db # Забезпечує, що сервіс 'db' (база даних) буде запущений і доступний перед запуском 'webapp'
+    restart: always # Автоматично перезапускати контейнер, якщо він зупинився або сервер перезавантажився
+
+  db: # Ім'я сервісу для вашої бази даних PostgreSQL
+    image: postgres:13-alpine # Використовує офіційний образ PostgreSQL версії 13 (легка версія 'alpine')
+    environment:
+      # Ці змінні середовища використовуються PostgreSQL для початкової ініціалізації бази даних
+      POSTGRES_DB: zooshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hekwey.s
+    volumes:
+      - db_data:/var/lib/postgresql/data # Створює "том" (named volume) 'db_data' на хост-машині
+                                         # та монтує його до директорії даних PostgreSQL всередині контейнера.
+                                         # Це забезпечує збереження ваших даних бази даних між перезапусками контейнера.
+    restart: always # Автоматично перезапускати контейнер бази даних, якщо він зупинився
+
+volumes:
+  db_data: # Визначення "тома" з назвою 'db_data'. Docker керуватиме зберіганням цих даних.
