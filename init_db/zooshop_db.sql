@@ -34,7 +34,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.update_updated_at_column() OWNER TO postgres;
+ALTER FUNCTION public.update_updated_at_column() OWNER TO zooshop_user;
 
 SET default_tablespace = '';
 
@@ -53,7 +53,7 @@ CREATE TABLE public.cart_items (
 );
 
 
-ALTER TABLE public.cart_items OWNER TO postgres;
+ALTER TABLE public.cart_items OWNER TO zooshop_user;
 
 --
 -- TOC entry 225 (class 1259 OID 16714)
@@ -69,7 +69,7 @@ CREATE SEQUENCE public.cart_items_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.cart_items_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.cart_items_id_seq OWNER TO zooshop_user;
 
 --
 -- TOC entry 4960 (class 0 OID 0)
@@ -94,7 +94,7 @@ CREATE TABLE public.order_items (
 );
 
 
-ALTER TABLE public.order_items OWNER TO postgres;
+ALTER TABLE public.order_items OWNER TO zooshop_user;
 
 --
 -- TOC entry 223 (class 1259 OID 16695)
@@ -110,7 +110,7 @@ CREATE SEQUENCE public.order_items_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.order_items_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.order_items_id_seq OWNER TO zooshop_user;
 
 --
 -- TOC entry 4961 (class 0 OID 0)
@@ -140,7 +140,7 @@ CREATE TABLE public.orders (
 );
 
 
-ALTER TABLE public.orders OWNER TO postgres;
+ALTER TABLE public.orders OWNER TO zooshop_user;
 
 --
 -- TOC entry 221 (class 1259 OID 16679)
@@ -156,7 +156,7 @@ CREATE SEQUENCE public.orders_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.orders_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.orders_id_seq OWNER TO zooshop_user;
 
 --
 -- TOC entry 4962 (class 0 OID 0)
@@ -185,7 +185,7 @@ CREATE TABLE public.products (
 );
 
 
-ALTER TABLE public.products OWNER TO postgres;
+ALTER TABLE public.products OWNER TO zooshop_user;
 
 --
 -- TOC entry 217 (class 1259 OID 16642)
@@ -201,7 +201,7 @@ CREATE SEQUENCE public.products_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.products_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.products_id_seq OWNER TO zooshop_user;
 
 --
 -- TOC entry 4963 (class 0 OID 0)
@@ -226,7 +226,7 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO postgres;
+ALTER TABLE public.users OWNER TO zooshop_user;
 
 --
 -- TOC entry 219 (class 1259 OID 16667)
@@ -242,7 +242,7 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.users_id_seq OWNER TO zooshop_user;
 
 --
 -- TOC entry 4964 (class 0 OID 0)
