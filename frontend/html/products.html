@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог товарів - Зоомагазин "Амброзія"</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/config.js"></script>
 </head>
 <body>
     <header class="header">
@@ -89,7 +90,7 @@
 
             async function fetchProducts() {
                 try {
-                    const response = await fetch('http://localhost:3000/api/products', {
+                    const response = await fetch(`${window.API_URL}/products`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',

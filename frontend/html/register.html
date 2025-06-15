@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реєстрація - Зоомагазин "Амброзія"</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/config.js"></script>
 </head>
 <body>
     <header class="header">
@@ -58,7 +59,7 @@
                 messageDiv.style.display = 'none';
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/register', {
+                    const response = await fetch(`${window.API_URL}/register`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

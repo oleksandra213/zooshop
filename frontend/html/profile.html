@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мій кабінет - Зоомагазин "Амброзія"</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/config.js"></script>
 </head>
 <body>
     <header class="header">
@@ -98,7 +99,7 @@
             errorProfile.style.display = 'none'; // Сховати повідомлення про помилку
 
             try {
-                const response = await fetch('http://localhost:3000/api/profile', {
+                const response = await fetch(`${window.API_URL}/profile`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

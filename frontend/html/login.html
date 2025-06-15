@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вхід на сайт - Зоомагазин "Амброзія"</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/config.js"></script>
 </head>
 <body>
     <header class="header">
@@ -62,7 +63,7 @@
 
                 try {
                     // >>> Змінено: відправляємо 'email' замість 'username' <<<
-                    const response = await fetch('http://localhost:3000/api/login', { 
+                    const response = await fetch(`${window.API_URL}/login`, { 
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
