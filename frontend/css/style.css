@@ -1,0 +1,719 @@
+/* Загальні стилі для всього сайту */
+*, *::before, *::after {
+    box-sizing: border-box; /* Важливо для адаптивного дизайну */
+}
+
+html {
+    scroll-behavior: smooth; /* Плавна прокрутка до якірних посилань */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e9ecef; /* Світліший фон */
+    color: #343a40; /* Темно-сірий текст */
+    line-height: 1.6;
+    min-height: 100vh; /* Мінімальна висота body, щоб футер був внизу */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Загальні стилі для посилань (якщо не перевизначено іншим селектором) */
+a {
+    color: #aa2929; /* Основний колір бренду */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #721c24; /* Темніший відтінок при наведенні */
+    text-decoration: underline;
+}
+
+/* Стилі для виділення тексту */
+::selection {
+    background-color: #e98a8a;
+    color: white;
+}
+
+/* Стилі для заголовка (шапки сайту) */
+.header {
+    background-color: #aa2929; /* Червоний колір */
+    color: white;
+    padding: 1.5rem 0;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Для позиціонування auth-links */
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.8em;
+    letter-spacing: 1px;
+}
+
+.header p {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+/* Стилі для блоку входу/реєстрації в шапці */
+.auth-links {
+    position: absolute; /* Позиціонуємо абсолютно */
+    top: 20px; /* Відступ зверху */
+    right: 20px; /* Відступ справа */
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Проміжок між посиланнями */
+}
+
+.auth-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    white-space: nowrap; /* Запобігає переносу тексту посилання */
+}
+
+.auth-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.auth-links .separator {
+    color: white;
+    /* margin: 0 10px; */ /* Замінено на gap у flexbox */
+}
+
+/* Стилі для навігаційної панелі */
+.navbar {
+    background-color: #e98a8a; /* Кораловий колір */
+    overflow: hidden;
+    text-align: center;
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 15px 22px;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+
+}
+.navbar a:hover {
+    background-color: #c07a7a; /* Темніший колір при наведенні */
+}
+
+
+/* Стилі для контейнера вмісту сторінки */
+.container {
+    flex-grow: 1; /* Дозволяє контейнеру займати доступний простір */
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff; /* Білий фон для вмісту */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Стилі для контактної інформації */
+.contact-info p {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+}
+
+.contact-info strong {
+    color: #aa2929;
+}
+
+.contact-info a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+/* Стилі для футера (нижня частина сайту) */
+.footer {
+    text-align: center;
+    padding: 25px;
+    background-color: #aa2929; /* Темно-сірий колір */
+    color: white;
+    margin-top: auto; /* Притискає футер до низу */
+    font-size: 0.95em;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Адаптивність (для мобільних пристроїв) */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2em;
+    }
+    .header p {
+        font-size: 1em;
+    }
+    .navbar a {
+        padding: 12px 15px;
+        font-size: 1em;
+    }
+    .container {
+        margin: 15px;
+        padding: 15px;
+    }
+    /* Адаптація auth-links для мобільних */
+    .auth-links {
+        position: static; /* Відновити звичайне позиціонування */
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 10px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        margin-top: 10px;
+    }
+    .auth-links .separator {
+        display: none; /* Приховати розділювач на мобільних */
+    }
+}
+
+
+/* Стилі для сітки товарів (products.html) */
+.product-grid {
+    background-color: rgba(255, 255, 255, 0.485); /* Залишив як було */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Розміщує картки в кілька стовпців */
+    gap: 70px; /* Додає відстань між картками */
+    padding: 10px;
+    margin: 20px;
+    justify-content: center; /* Центрує елементи в сітці */
+}
+
+.product-item {
+    background-color: rgb(255, 247, 247);
+    padding: 15px; /* Збільшив паддінг для кращого вигляду */
+    border-radius: 20px; /* Заокруглені кути */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тінь для карток */
+    text-align: center;
+    width: 100%; /* Дозволить minmax(250px, 1fr) краще працювати */
+    display: flex; /* Для центрування вмісту */
+    flex-direction: column; /* Елементи один під одним */
+    justify-content: space-between; /* Розмістить кнопку внизу */
+}
+
+.product-item img {
+    width: 100%; /* Зображення займає всю ширину картки */
+    max-height: 500px; /* Обмеження висоти зображення */
+    object-fit: contain; /* Зберігає пропорції, вміщуючись у рамки */
+    border-radius: 8px; /* Заокруглені кути для зображення */
+    margin-bottom: 15px;
+}
+
+.product-item h3 {
+    font-size: 1.4em;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    color: #aa2929;
+}
+
+.product-item p {
+    font-size: 0.95em;
+    margin-bottom: 8px;
+}
+
+.product-item .price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #28a745; /* Зелений для ціни */
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.add-to-cart-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Кнопка на всю ширину картки */
+    margin-top: auto; /* Притискає кнопку до низу картки */
+}
+
+.add-to-cart-btn:hover {
+    background-color: #0056b3;
+}
+
+
+/* Стилі для форм (логін, реєстрація, оформлення замовлення) */
+.container h2{
+    text-align: center;
+    margin-bottom: 30px;
+    color: #aa2929;
+    font-size: 2em;
+}
+
+form {
+    padding: 20px;
+    background-color: #f8f9fa; /* Світліший фон для форми */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    max-width: 500px; /* Обмеження ширини форми */
+    margin: 0 auto; /* Центрування форми */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"] { /* ДОДАНО: Стилі для типу tel */
+    width: calc(100% - 20px); /* Врахувати паддінг */
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="tel"]:focus { /* ДОДАНО: Стилі для типу tel */
+    border-color: #aa2929;
+    box-shadow: 0 0 0 0.2rem rgba(170, 41, 41, 0.25);
+    outline: none;
+}
+
+/* Стилі для кнопки submit у формах */
+.form-group input[type="submit"],
+.button { /* ЗАГАЛЬНИЙ СТИЛЬ: Застосовується до .button та input[type="submit"] */
+    background-color: #aa2929; /* Червоний колір бренду */
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    width: 100%; /* Кнопка на всю ширину */
+    transition: background-color 0.3s ease;
+    /* Ці стилі були в .form-group input[type="submit"] */
+}
+
+.form-group input[type="submit"]:hover,
+.button:hover { /* ЗАГАЛЬНИЙ СТИЛЬ: Ховер для .button та input[type="submit"] */
+    background-color: #721c24; /* Темніший відтінок при наведенні */
+}
+
+
+/* Стилі для повідомлень (успіх/помилка) */
+.message {
+    margin-top: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Стилі для повідомлень про завантаження/помилки на сторінці товарів */
+.loading-message, .error-message, .no-products-message {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 1.1em;
+    color: #6c757d;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
+/* Загальні текстові стилі в контейнері */
+.container p {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.container h3 {
+    margin: 20px 0 15px 0;
+    text-align: center;
+    color: #aa2929;
+    font-size: 1.5em;
+}
+
+.container ul {
+    margin: 20px auto;
+    padding-left: 20px;
+    list-style-type: disc;
+    max-width: 800px;
+    text-align: left;
+}
+
+.container ul li {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+/* Стилі для розкладу (якщо використовується) */
+.timetable {
+    margin: 0 auto; /* Центрування */
+    justify-self: center;
+    width: max-content;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* ========================================================================= */
+/* НОВІ СТИЛІ ДЛЯ КОШИКА (CART.HTML) */
+/* ========================================================================= */
+
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    flex-wrap: wrap; /* Дозволяє елементам переноситися на менших екранах */
+}
+
+.cart-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 20px;
+    border-radius: 4px;
+    flex-shrink: 0; /* Запобігає зменшенню розміру зображення */
+}
+
+.cart-item-details {
+    flex-grow: 1; /* Дозволяє деталям займати доступний простір */
+    margin-right: 15px; /* Відступ від кнопок управління кількістю */
+    min-width: 150px; /* Мінімальна ширина для деталей, щоб не стискалися сильно */
+}
+
+.cart-item-details h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 1.3em; /* Трохи більший розмір заголовка товару */
+    text-align: left; /* Вирівнювання заголовка */
+}
+
+.cart-item-details p {
+    margin: 0 0 5px 0;
+    color: #555;
+    text-align: left; /* Вирівнювання тексту */
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    flex-shrink: 0; /* Запобігає зменшенню розміру контролів кількості */
+}
+
+.quantity-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    min-width: 30px; /* Фіксована мінімальна ширина для кнопок */
+}
+
+.quantity-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.item-quantity {
+    display: inline-block;
+    min-width: 25px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+.remove-item-btn {
+    background-color: #dc3545; /* Червоний */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-left: auto; /* Виштовхує кнопку вправо */
+    flex-shrink: 0;
+}
+
+.remove-item-btn:hover {
+    background-color: #c82333;
+}
+
+.cart-summary {
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    margin-top: 30px;
+    text-align: right;
+}
+
+.cart-summary h3 {
+    color: #333;
+    font-size: 1.8em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: right; /* Вирівнювання заголовка суми */
+}
+
+.cart-summary #cartTotal {
+    color: #aa2929; /* Колір бренду для загальної суми */
+}
+
+/* ЗАГАЛЬНІ СТИЛІ ДЛЯ КНОПОК */
+.button {
+    background-color: #aa2929; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    width: 99%;
+}
+
+.button:hover {
+    background-color: #5a6268;
+}
+
+/* НОВЕ/ЗМІНЕНО: Стиль для вимкненої кнопки/посилання */
+.button:disabled,
+.button-disabled { /* Застосовується до елементів з класом button-disabled */
+    background-color: #cccccc !important; /* Сірий фон, !important для перезапису */
+    cursor: not-allowed !important; /* Курсор "заборонено" */
+    opacity: 0.7; /* Зробити трохи прозорими */
+}
+
+.button-secondary {
+    background-color: #d46e6e; /* Сірий для вторинних дій */
+}
+
+.button-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Повідомлення про порожній кошик */
+#emptyCartMessage {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 1.2em;
+    color: #6c757d;
+    font-style: italic;
+}
+
+
+/* Адаптація стилів кошика для мобільних пристроїв */
+@media (max-width: 600px) {
+    .cart-item {
+        flex-direction: column; /* Елементи один під одним */
+        align-items: flex-start; /* Вирівнювання на початку */
+    }
+
+    .cart-item-image {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 100%; /* Зображення на всю ширину */
+        max-height: 150px;
+    }
+
+    .cart-item-details {
+        margin-right: 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    .cart-item-details h3,
+    .cart-item-details p {
+        text-align: center;
+    }
+
+    .quantity-controls {
+        width: 100%;
+        justify-content: center; /* Центрувати кнопки */
+        margin-top: 15px;
+    }
+
+    .remove-item-btn {
+        width: calc(100% - 30px); /* Майже на всю ширину з відступами */
+        margin: 20px auto 0 auto; /* Центрувати кнопку "Видалити" */
+    }
+
+    .cart-summary {
+        text-align: center; /* Центрувати суму та кнопки на мобільних */
+    }
+
+    .cart-summary button,
+    .cart-summary a.button { /* ДОДАНО: Стилі для посилання-кнопки */
+        width: 100%;
+        margin-bottom: 10px;
+        margin-left: 0 !important; /* Скасовує margin-left для кнопок */
+    }
+}
+
+
+/* ========================================================================= */
+/* НОВІ СТИЛІ ДЛЯ СТОРІНКИ ОФОРМЛЕННЯ ЗАМОВЛЕННЯ (CHECKOUT.HTML) */
+/* ========================================================================= */
+
+.order-summary-details {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.order-summary-details h3 {
+    color: #aa2929;
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 1.6em;
+}
+
+.order-summary-details ul {
+    list-style: none; /* Прибрати маркери */
+    padding: 0;
+    margin: 0;
+}
+
+.order-summary-details ul li {
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1em;
+    color: #555;
+}
+
+.order-summary-details ul li:last-child {
+    border-bottom: none;
+}
+
+.order-summary-details h4 {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 2em;
+    color: #333;
+}
+
+.order-summary-details h4 span {
+    color: #28a745; /* Зелений для загальної суми */
+    font-weight: bold;
+}
+
+/* Стилі для форми доставки */
+#checkoutForm {
+    margin-top: 20px; /* Відступ від summary */
+    background-color: #ffffff; /* Білий фон для форми доставки */
+    padding: 25px;
+}
+
+#checkoutForm .form-group input[type="tel"] {
+    margin-bottom: 5px; /* Менший відступ до small тексту */
+}
+
+#checkoutForm .form-group small {
+    display: block;
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-top: -10px; /* Підтягнути ближче до інпуту */
+}
+
+#placeOrderButton {
+    /* Ця кнопка вже підпадає під .button стилі, але можна додати специфічні */
+    background-color: #aa2929; /* Зелена кнопка для оформлення */
+}
+
+#placeOrderButton:hover {
+    background-color: #218838; /* Темніший зелений */
+}
+
+/* Стиль для повідомлення про порожній кошик на checkout.html */
+#emptyCheckoutMessage {
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* Адаптація стилів для Checkout на мобільних пристроях */
+@media (max-width: 600px) {
+    .order-summary-details h3 {
+        text-align: center; /* Центрувати заголовки на мобільних */
+    }
+    .order-summary-details ul li {
+        flex-direction: column; /* Елементи списку один під одним */
+        align-items: flex-start;
+    }
+    .order-summary-details ul li span {
+        margin-top: 5px; /* Відступ між назвою та ціною */
+        font-weight: bold;
+    }
+    .order-summary-details h4 {
+        text-align: center;
+    }
+    #checkoutForm {
+        padding: 15px; /* Зменшити паддінг форми */
+    }
+}

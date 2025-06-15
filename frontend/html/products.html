@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог товарів - Зоомагазин "Амброзія"</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Зоомагазин "Амброзія"</h1>
+        <p>Все найкраще для ваших улюбленців</p>
+    </header>
+
+    <nav class="navbar">
+        <a href="index.html">Головна</a>
+        <a href="products.html" id="productsLink">Каталог товарів</a>
+        <a href="cart.html" id="cartLink">Кошик (<span id="cartItemCount">0</span>)</a> <a href="contacts.html">Контакти</a>
+        <a href="profile.html" id="profileLink">Мій кабінет</a>
+        <a href="#" id="logoutButton" style="float:right;">Вихід</a> 
+    </nav>
+
+    <div class="container">
+        <h2>Наші товари</h2>
+        <div id="product-grid" class="product-grid"></div>
+        <p class="loading-message" id="loadingMessage">Завантаження товарів...</p>
+        <p class="error-message" id="errorMessage" style="display: none;">Не вдалося завантажити товари. Будь ласка, спробуйте пізніше.</p>
+        <p class="no-products-message" id="noProductsMessage" style="display: none;">На жаль, товарів поки немає в наявності.</p>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Зоомагазин "Амброзія". Усі права захищені.</p>
+    </footer>
+
+    <script>
+        // Функція для оновлення лічильника товарів у кошику
+        function updateCartItemCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartItemCount').textContent = totalItems;
+        }
+
+        // Функція для додавання товару в кошик
+        function addToCart(product) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const existingItem = cart.find(item => item.id === product.id);
+
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: parseFloat(product.price),
+                    image_url: product.image_url,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartItemCount(); // Оновлюємо лічильник
+            alert(`${product.name} додано до кошика!`); // Простий фідбек
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const productGrid = document.getElementById('product-grid');
+            const loadingMessage = document.getElementById('loadingMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const noProductsMessage = document.getElementById('noProductsMessage');
+            const logoutButton = document.getElementById('logoutButton');
+            const productsLink = document.getElementById('productsLink'); // Для посилання на products.html
+            const profileLink = document.getElementById('profileLink'); // Для посилання на profile.html
+            const cartLink = document.getElementById('cartLink'); // Для посилання на cart.html
+
+            // Оновлюємо лічильник при завантаженні сторінки
+            updateCartItemCount();
+
+            // Перевірка авторизації
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Для доступу до каталогу товарів потрібно увійти. Ви будете перенаправлені на сторінку входу.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadingMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            noProductsMessage.style.display = 'none';
+            productGrid.innerHTML = '';
+
+            async function fetchProducts() {
+                try {
+                    const response = await fetch('http://localhost:3000/api/products', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.status === 401 || response.status === 403) {
+                        alert('Ваша сесія закінчилася або ви не авторизовані. Будь ласка, увійдіть знову.');
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        let errorDetails = '';
+                        try {
+                            const errorData = await response.json();
+                            errorDetails = errorData.message ? `: ${errorData.message}` : '';
+                        } catch (jsonError) {
+                            errorDetails = `: ${response.statusText}`;
+                        }
+                        throw new Error(`Помилка HTTP: ${response.status}${errorDetails}`);
+                    }
+
+                    const products = await response.json();
+
+                    loadingMessage.style.display = 'none';
+
+                    if (products.length === 0) {
+                        noProductsMessage.style.display = 'block';
+                        return;
+                    }
+
+                    products.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.classList.add('product-item');
+
+                        const imageUrl = product.image_url && product.image_url.startsWith('http')
+                                            ? product.image_url
+                                            : `../images/${product.image_url || 'placeholder.jpg'}`;
+
+                        productDiv.innerHTML = `
+                            <img src="${imageUrl}" alt="${product.name}">
+                            <h3>${product.name}</h3>
+                            <p>${product.description || 'Опис відсутній.'}</p>
+                            <p class="price">${parseFloat(product.price).toFixed(2)} грн</p>
+                            <p>В наявності: ${product.stock_quantity || 0}</p>
+                            <button class="add-to-cart-btn" data-product-id="${product.id}">Додати в кошик</button>
+                        `;
+                        productGrid.appendChild(productDiv);
+                    });
+
+                    // ДОДАНО: Обробники подій для кнопок "Додати в кошик"
+                    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const productId = parseInt(event.target.dataset.productId);
+                            const productToAdd = products.find(p => p.id === productId);
+                            if (productToAdd) {
+                                // Перевірка наявності товару на складі перед додаванням
+                                if (productToAdd.stock_quantity > 0) {
+                                    addToCart(productToAdd);
+                                } else {
+                                    alert('Цього товару немає в наявності!');
+                                }
+                            }
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Помилка при завантаженні товарів:', error);
+                    loadingMessage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    productGrid.innerHTML = '';
+                }
+            }
+
+            fetchProducts();
+
+            // Логіка для кнопки "Вихід"
+            if (logoutButton) {
+                logoutButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    alert('Ви успішно вийшли з облікового запису.');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Динамічна зміна посилань навігації (як у index.html)
+            const userDataString = localStorage.getItem('user');
+            if (token && userDataString) {
+                // Користувач авторизований
+                // productsLink вже вірний
+                profileLink.style.display = 'inline-block'; // Якщо прихований в CSS
+                logoutButton.style.display = 'inline-block';
+            } else {
+                // Користувач не авторизований
+                productsLink.href = 'login.html'; // Перенаправляти на логін
+                cartLink.href = 'login.html'; // Кошик теж вимагає входу
+                profileLink.style.display = 'none';
+                logoutButton.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

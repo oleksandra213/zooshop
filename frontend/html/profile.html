@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій кабінет - Зоомагазин "Амброзія"</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Мій кабінет</h1>
+        <p>Ваші персональні дані та інформація.</p>
+    </header>
+
+    <nav class="navbar">
+        <a href="index.html">Головна</a>
+        <a href="products.html" id="productsLink">Каталог товарів</a>
+        <a href="contacts.html">Контакти</a>
+        <a href="profile.html" id="profileLink">Мій кабінет</a>
+        <a href="#" id="logoutButton" style="float:right;">Вихід</a> 
+    </nav>
+
+    <div class="container">
+        <h2>Вітаємо, <span id="profileUsernameDisplay"></span>!</h2> 
+        <div id="profileInfo">
+            <p><strong>Ім'я користувача:</strong> <span id="displayUsername"></span></p>
+            <p><strong>Електронна пошта:</strong> <span id="displayEmail"></span></p>
+            <h3>Мої замовлення</h3>
+            <div id="ordersList">
+                <p>Замовлень поки немає.</p> 
+            </div>
+        </div>
+        <p id="loadingProfile" class="loading-message" style="display: none;">Завантаження даних профілю...</p>
+        <p id="errorProfile" class="error-message" style="display: none;">Не вдалося завантажити дані профілю. Будь ласка, спробуйте пізніше.</p>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Зоомагазин "Амброзія". Усі права захищені.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const profileUsernameDisplay = document.getElementById('profileUsernameDisplay');
+            const displayUsername = document.getElementById('displayUsername');
+            const displayEmail = document.getElementById('displayEmail');
+            const loadingProfile = document.getElementById('loadingProfile');
+            const errorProfile = document.getElementById('errorProfile');
+            const logoutButton = document.getElementById('logoutButton');
+            const ordersList = document.getElementById('ordersList'); // Елемент для виведення замовлень
+
+            const token = localStorage.getItem('token');
+            const userDataString = localStorage.getItem('user');
+
+            // 1. Перевірка авторизації та наявність токена/даних користувача
+            if (!token || !userDataString) {
+                alert('Ви не авторизовані або ваша сесія закінчилася. Будь ласка, увійдіть.');
+                localStorage.removeItem('token'); 
+                localStorage.removeItem('user');
+                localStorage.removeItem('cart'); // Очищаємо кошик також
+                window.location.href = 'login.html';
+                return;
+            }
+
+            let localUserData;
+            try {
+                localUserData = JSON.parse(userDataString);
+            } catch (e) {
+                console.error("Помилка парсингу даних користувача з localStorage:", e);
+                alert('Помилка даних користувача. Будь ласка, увійдіть знову.');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('cart'); // Очищаємо кошик також
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 2. Виведення базових даних користувача з localStorage (доступно негайно)
+            if (localUserData) {
+                profileUsernameDisplay.textContent = localUserData.username || 'Користувач';
+                displayUsername.textContent = localUserData.username || 'Невідомо';
+                displayEmail.textContent = localUserData.email || 'Невідомо';
+            }
+
+            // 3. Логіка для кнопки "Вихід"
+            if (logoutButton) {
+                logoutButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('cart'); // Очищаємо кошик
+                    alert('Ви успішно вийшли з облікового запису.');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // 4. Завантаження розширених даних профілю та замовлень з бек-енду
+            loadingProfile.style.display = 'block'; // Показати індикатор завантаження
+            errorProfile.style.display = 'none'; // Сховати повідомлення про помилку
+
+            try {
+                const response = await fetch('http://localhost:3000/api/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    alert('Ваша сесія закінчилася або ви не авторизовані. Будь ласка, увійдіть знову.');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('cart');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Помилка HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Дані профілю з бек-енду:', data); // Для налагодження
+
+                // Оновлюємо дані користувача з бек-енду (якщо вони відрізняються або додаткові)
+                // Хоча для username і email це вже зроблено з localStorage,
+                // ми можемо бути впевнені, що це актуальні дані з БД.
+                if (data.user) {
+                    profileUsernameDisplay.textContent = data.user.username || 'Користувач';
+                    displayUsername.textContent = data.user.username || 'Невідомо';
+                    displayEmail.textContent = data.user.email || 'Невідомо';
+                }
+                
+                // --- ЛОГІКА ДЛЯ ВІДОБРАЖЕННЯ ЗАМОВЛЕНЬ ---
+                if (data.orders && data.orders.length > 0) {
+                    ordersList.innerHTML = ''; // Очищаємо початкове повідомлення "Замовлень поки немає."
+                    data.orders.forEach(order => {
+                        const orderDiv = document.createElement('div');
+                        orderDiv.classList.add('order-card'); // Додайте цей клас до вашого style.css для оформлення
+                        orderDiv.innerHTML = `
+                            <h4>Замовлення #${order.order_id}</h4>
+                            <p><strong>Дата:</strong> ${new Date(order.order_date).toLocaleDateString()} ${new Date(order.order_date).toLocaleTimeString()}</p>
+                            <p><strong>Загальна сума:</strong> ${order.total_amount ? order.total_amount.toFixed(2) : '0.00'} грн</p>
+                            <p><strong>Статус:</strong> ${order.status}</p>
+                            <p><strong>Адреса доставки:</strong> ${order.delivery_address || 'Не вказано'}</p>
+                            <p><strong>Телефон:</strong> ${order.contact_phone || 'Не вказано'}</p>
+                            <p><strong>Отримувач:</strong> ${order.customer_full_name || 'Не вказано'}</p>
+                            <h5>Товари в замовленні:</h5>
+                            <ul class="order-items-list">
+                                ${order.items && order.items.length > 0 ? order.items.map(item => `
+                                    <li>
+                                        ${item.image_url ? `<img src="${item.image_url}" alt="${item.product_name}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">` : ''}
+                                        ${item.product_name || 'Назва товару відсутня'} x ${item.quantity || 0} шт. (Ціна за 1: ${item.price_at_purchase ? item.price_at_purchase.toFixed(2) : '0.00'} грн)
+                                    </li>
+                                `).join('') : '<li>Немає товарів у цьому замовленні.</li>'}
+                            </ul>
+                        `;
+                        ordersList.appendChild(orderDiv);
+                    });
+                } else {
+                    ordersList.innerHTML = '<p>У вас поки немає замовлень.</p>';
+                }
+                // --- КІНЕЦЬ ЛОГІКИ ДЛЯ ВІДОБРАЖЕННЯ ЗАМОВЛЕНЬ ---
+
+                loadingProfile.style.display = 'none'; // Сховати індикатор завантаження
+
+            } catch (error) {
+                console.error('Помилка при завантаженні даних профілю або замовлень:', error);
+                loadingProfile.style.display = 'none';
+                errorProfile.style.display = 'block';
+                // Якщо завантаження з бек-енду не вдалося, базові дані з localStorage все одно будуть показані.
+                // Можна також очистити список замовлень, якщо виникла помилка під час їх завантаження.
+                ordersList.innerHTML = '<p>Не вдалося завантажити ваші замовлення.</p>'; 
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зоомагазин "Амброзія"</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Зоомагазин «Амброзія» — все найкраще для вашого улюбленця"!</h1>
+        <p>Все для ваших чотирилапих, пернатих та лускатих друзів.</p>
+        <div class="auth-links">
+            <a href="login.html" id="loginLink">Вхід</a>
+            <span class="separator" id="authSeparator" style="display: inline-block;">|</span> <a href="register.html" id="registerLink">Реєстрація</a>
+            <a href="#" id="logoutButton" style="display: none;">Вихід</a> </div>
+    </header>
+
+    <nav class="navbar">
+        <a href="index.html">Головна</a>
+        <a href="products.html" id="productsLink">Каталог товарів</a> 
+        <a href="contacts.html">Контакти</a>
+        <a href="profile.html" id="profileLink" style="display: none;">Мій кабінет</a> 
+    </nav>
+
+    <div class="container">
+        <h2>Коротко про Амброзія</h2>
+        <p>
+            Ласкаво просимо до «Амброзії» — місця, де піклування про тварин стає справжнім задоволенням. Ми віримо, що кожна тваринка заслуговує на любов, якісне харчування та комфорт. Саме тому ми створили простір, де кожен знайде все необхідне для свого пухнастого (або лускатого, або пернатого!) друга.
+        </p>
+        
+        <img src="../images/ambosia-zooshop.jpg" alt="Зоомагазин 'Амброзія'">
+        asdfsdfdf
+        <p>
+            Ми віримо, що кожна тварина заслуговує на любов та найкращий догляд. Тому ми ретельно відбираємо кожен товар, 
+            щоб гарантувати його якість та безпеку. Завітайте до нашого каталогу, щоб знайти ідеальний подарунок для вашого пухнастого друга!
+        </p>
+        
+        <h3>Ми дбаємо не лише про тварин, а й про вас!</h3>
+        <ul>
+            <li>Наші консультанти допоможуть з вибором товару під потреби саме вашого улюбленця;</li>
+            <li>Ми постійно оновлюємо асортимент, орієнтуючись на новинки ринку та побажання клієнтів;</li>
+            <li>Регулярні акції, програма лояльності та подарунки постійним покупцям.</li>
+        </ul>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Зоомагазин "Амброзія". Всі права захищені.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const productsLink = document.getElementById('productsLink');
+            const profileLink = document.getElementById('profileLink');
+            const loginLink = document.getElementById('loginLink');
+            const registerLink = document.getElementById('registerLink');
+            const logoutButton = document.getElementById('logoutButton');
+            const authSeparator = document.getElementById('authSeparator'); // Отримуємо розділювач
+
+            if (token) {
+                // Користувач авторизований
+                loginLink.style.display = 'none';
+                registerLink.style.display = 'none';
+                authSeparator.style.display = 'none'; // Приховуємо розділювач
+                profileLink.style.display = 'block';
+                logoutButton.style.display = 'inline-block'; // Використовуємо inline-block для кнопок
+                // productsLink вже веде на products.html, це добре
+            } else {
+                // Користувач не авторизований
+                // productsLink буде вести на сторінку входу
+                productsLink.href = 'login.html'; 
+                profileLink.style.display = 'none';
+                logoutButton.style.display = 'none';
+                loginLink.style.display = 'inline-block';
+                registerLink.style.display = 'inline-block';
+                authSeparator.style.display = 'inline-block'; // Показуємо розділювач
+            }
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', (event) => {
+                    event.preventDefault(); // Запобігаємо стандартній дії посилання
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    alert('Ви успішно вийшли з облікового запису.');
+                    window.location.href = 'index.html'; // Перенаправлення на головну сторінку
+                });
+            }
+        });
+    </script>
+</body>
+</html>

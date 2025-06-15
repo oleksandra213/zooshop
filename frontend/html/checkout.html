@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформлення замовлення - Зоомагазин "Амброзія"</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Оформлення замовлення</h1>
+        <p>Будь ласка, заповніть дані для доставки.</p>
+    </header>
+
+    <nav class="navbar">
+        <a href="index.html">Головна</a>
+        <a href="products.html">Каталог товарів</a>
+        <a href="cart.html">Кошик (<span id="cartItemCountNav">0</span>)</a>
+        <a href="contacts.html">Контакти</a>
+        <a href="profile.html">Мій кабінет</a>
+        <a href="#" id="logoutButton" style="float:right;">Вихід</a> 
+    </nav>
+
+    <div class="container">
+        <h2>Ваше замовлення</h2>
+        <div id="orderSummary" class="order-summary-details">
+            <p id="emptyCheckoutMessage" style="display: none; text-align: center; color: #dc3545;">Ваш кошик порожній. Будь ласка, додайте товари.</p>
+        </div>
+
+        <h2>Дані для доставки</h2>
+        <form id="checkoutForm">
+            <div class="form-group">
+                <label for="fullName">Повне ім'я:</label>
+                <input type="text" id="fullName" name="fullName" required placeholder="Ім'я Прізвище">
+            </div>
+            <div class="form-group">
+                <label for="address">Адреса доставки:</label>
+                <input type="text" id="address" name="address" required placeholder="Місто, вулиця, будинок, квартира">
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" required placeholder="+380XXXXXXXXX" pattern="^\+380\d{9}$">
+                <small>Формат: +380XXXXXXXXX</small>
+            </div>
+            <div class="form-group">
+                <button type="submit" id="placeOrderButton" class="button">Підтвердити замовлення</button>
+            </div>
+            <div id="message" class="message" style="display: none;"></div>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Зоомагазин "Амброзія". Усі права захищені.</p>
+    </footer>
+
+    <script>
+        // Функція для оновлення лічильника товарів у кошику (для навігації)
+        function updateCartItemCountNav() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartItemCountNav').textContent = totalItems;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const logoutButton = document.getElementById('logoutButton');
+            const orderSummary = document.getElementById('orderSummary');
+            const checkoutForm = document.getElementById('checkoutForm');
+            const placeOrderButton = document.getElementById('placeOrderButton');
+            const messageDiv = document.getElementById('message');
+            const emptyCheckoutMessage = document.getElementById('emptyCheckoutMessage');
+
+            // Перевірка авторизації
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Ви не авторизовані. Будь ласка, увійдіть.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Отримання даних користувача з localStorage для попереднього заповнення форми
+            const userDataString = localStorage.getItem('user');
+            let currentUser = null;
+            if (userDataString) {
+                try {
+                    currentUser = JSON.parse(userDataString);
+                    document.getElementById('fullName').value = currentUser.username || ''; // Якщо ім'я зберігається
+                    // Можливо, у вас є інші поля, як email, які можна заповнити
+                } catch (e) {
+                    console.error("Помилка парсингу user data з localStorage:", e);
+                }
+            }
+
+
+            // Отримання вмісту кошика
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+            // Якщо кошик порожній, не дозволяємо оформлення замовлення
+            if (cart.length === 0) {
+                orderSummary.innerHTML = '';
+                emptyCheckoutMessage.style.display = 'block';
+                checkoutForm.style.display = 'none'; // Приховати форму
+                placeOrderButton.disabled = true; // Вимкнути кнопку
+                alert('Ваш кошик порожній. Будь ласка, додайте товари, щоб оформити замовлення.');
+                return; // Зупинити виконання скрипту
+            } else {
+                emptyCheckoutMessage.style.display = 'none';
+                checkoutForm.style.display = 'block'; // Показати форму
+                placeOrderButton.disabled = false;
+            }
+
+
+            // Відображення товарів у замовленні
+            let totalAmount = 0;
+            let summaryHtml = '<h3>Товари:</h3><ul>';
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                totalAmount += itemTotal;
+                summaryHtml += `<li>${item.name} (x${item.quantity}) - ${item.price.toFixed(2)} грн кожен = ${itemTotal.toFixed(2)} грн</li>`;
+            });
+            summaryHtml += `</ul><h4>Загальна сума до сплати: ${totalAmount.toFixed(2)} грн</h4>`;
+            orderSummary.innerHTML = summaryHtml;
+            updateCartItemCountNav(); // Оновлюємо лічильник кошика в навігації
+
+
+            // Логіка для кнопки "Вихід"
+            if (logoutButton) {
+                logoutButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('cart'); // Очищаємо кошик при виході
+                    alert('Ви успішно вийшли з облікового запису.');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Обробка форми оформлення замовлення
+            checkoutForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                messageDiv.textContent = '';
+                messageDiv.className = 'message';
+                messageDiv.style.display = 'none';
+                placeOrderButton.disabled = true; // Вимкнути кнопку на час відправки
+
+                const fullName = document.getElementById('fullName').value;
+                const address = document.getElementById('address').value;
+                const phone = document.getElementById('phone').value;
+
+                // Валідація телефону за патерном
+                const phonePattern = /^\+380\d{9}$/;
+                if (!phonePattern.test(phone)) {
+                    messageDiv.classList.add('error');
+                    messageDiv.textContent = 'Будь ласка, введіть телефон у форматі +380XXXXXXXXX.';
+                    messageDiv.style.display = 'block';
+                    placeOrderButton.disabled = false;
+                    return;
+                }
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            items: cart.map(item => ({ id: item.id, quantity: item.quantity })),
+                            deliveryDetails: { fullName, address, phone }
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.classList.add('success');
+                        messageDiv.textContent = data.message || 'Замовлення успішно оформлено!';
+                        localStorage.removeItem('cart'); // Очищаємо кошик після успішного замовлення
+                        updateCartItemCountNav(); // Оновлюємо лічильник
+
+                        checkoutForm.reset(); // Очищуємо форму
+                        // Можна перенаправити на сторінку "Дякуємо" або профіль
+                        setTimeout(() => {
+                            alert('Ваше замовлення прийнято! Дякуємо за покупку!');
+                            window.location.href = 'profile.html'; // Перенаправлення на сторінку профілю
+                        }, 1500);
+
+                    } else {
+                        messageDiv.classList.add('error');
+                        messageDiv.textContent = data.message || 'Помилка при оформленні замовлення.';
+                        placeOrderButton.disabled = false; // Ввімкнути кнопку назад
+                    }
+                } catch (error) {
+                    console.error('Помилка мережі або сервера при оформленні замовлення:', error);
+                    messageDiv.classList.add('error');
+                    messageDiv.textContent = 'Не вдалося підключитися до сервера. Будь ласка, перевірте ваше з\'єднання.';
+                    placeOrderButton.disabled = false; // Ввімкнути кнопку назад
+                } finally {
+                    messageDiv.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

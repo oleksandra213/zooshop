@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш кошик - Зоомагазин "Амброзія"</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Ваш кошик</h1>
+        <p>Перегляньте ваші вибрані товари.</p>
+    </header>
+
+    <nav class="navbar">
+        <a href="index.html">Головна</a>
+        <a href="products.html">Каталог товарів</a>
+        <a href="cart.html">Кошик (<span id="cartItemCountNav">0</span>)</a>
+        <a href="contacts.html">Контакти</a>
+        <a href="profile.html">Мій кабінет</a>
+        <a href="#" id="logoutButton" style="float:right;">Вихід</a> 
+    </nav>
+
+    <div class="container">
+        <div id="cartItems" class="cart-items">
+            </div>
+        <p id="emptyCartMessage" style="display: none; text-align: center; margin-top: 20px;">Ваш кошик порожній.</p>
+        <div class="cart-summary" style="margin-top: 30px; text-align: right;">
+            <h3>Загальна сума: <span id="cartTotal">0.00</span> грн</h3>
+            <a href="checkout.html" id="checkoutButton" class="button" style="margin-top: 15px; display: inline-block;">Оформити замовлення</a>
+            <button id="clearCartButton" class="button button-secondary" style="margin-top: 15px; margin-left: 10px;">Очистити кошик</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Зоомагазин "Амброзія". Усі права захищені.</p>
+    </footer>
+
+    <script>
+        // Функція для оновлення лічильника товарів у кошику (для навігації)
+        function updateCartItemCountNav() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartItemCountNav').textContent = totalItems;
+        }
+
+        // Функція для відображення кошика
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotalElement = document.getElementById('cartTotal');
+            const emptyCartMessage = document.getElementById('emptyCartMessage');
+            const checkoutButton = document.getElementById('checkoutButton'); // Отримуємо кнопку
+            const clearCartButton = document.getElementById('clearCartButton');
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            let total = 0;
+
+            cartItemsContainer.innerHTML = ''; // Очищаємо перед відображенням
+
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+                checkoutButton.classList.add('button-disabled'); // Додаємо клас для стилізації
+                checkoutButton.style.pointerEvents = 'none'; // Заборонити кліки на посиланні
+                clearCartButton.disabled = true; // Вимкнути кнопку очищення
+            } else {
+                emptyCartMessage.style.display = 'none';
+                checkoutButton.classList.remove('button-disabled'); // Видалити клас
+                checkoutButton.style.pointerEvents = 'auto'; // Дозволити кліки
+                clearCartButton.disabled = false;
+
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+
+                    const cartItemDiv = document.createElement('div');
+                    cartItemDiv.classList.add('cart-item');
+                    cartItemDiv.dataset.productId = item.id;
+
+                    const imageUrl = item.image_url && (item.image_url.startsWith('http') || item.image_url.startsWith('https'))
+                                            ? item.image_url
+                                            : `../images/${item.image_url || 'placeholder.jpg'}`;
+
+                    cartItemDiv.innerHTML = `
+                        <img src="${imageUrl}" alt="${item.name}" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h3>${item.name}</h3>
+                            <p>Ціна: ${item.price.toFixed(2)} грн</p>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
+                                <span class="item-quantity">${item.quantity}</span>
+                                <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
+                            </div>
+                            <p>Всього: <span class="item-total">${itemTotal.toFixed(2)}</span> грн</p>
+                        </div>
+                        <button class="remove-item-btn" data-id="${item.id}">Видалити</button>
+                    `;
+                    cartItemsContainer.appendChild(cartItemDiv);
+                });
+            }
+
+            cartTotalElement.textContent = total.toFixed(2);
+            updateCartItemCountNav();
+        }
+
+        // Функція для зміни кількості товару
+        function changeQuantity(productId, change) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const itemIndex = cart.findIndex(item => item.id === productId);
+
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity += change;
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        // Функція для видалення товару з кошика
+        function removeItem(productId) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        // Функція для очищення всього кошика
+        function clearCart() {
+            if (confirm('Ви впевнені, що хочете очистити весь кошик?')) {
+                localStorage.removeItem('cart');
+                renderCart();
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            const clearCartButton = document.getElementById('clearCartButton'); // Перевірка, чи не повторюється
+
+            // Перевірка авторизації при завантаженні сторінки кошика
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Для перегляду кошика потрібно увійти. Ви будете перенаправлені на сторінку входу.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            renderCart(); // Перше відображення кошика при завантаженні сторінки
+
+            // Логіка для кнопки "Вихід"
+            if (logoutButton) {
+                logoutButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('cart');
+                    alert('Ви успішно вийшли з облікового запису.');
+                    window.location.href = 'login.html';
+                });
+            }
+
+            // Делегування подій для кнопок +/-, видалити
+            document.getElementById('cartItems').addEventListener('click', (event) => { // Використовуємо делегування
+                const target = event.target;
+                if (target.classList.contains('increase-quantity')) {
+                    const productId = parseInt(target.dataset.id);
+                    changeQuantity(productId, 1);
+                } else if (target.classList.contains('decrease-quantity')) {
+                    const productId = parseInt(target.dataset.id);
+                    changeQuantity(productId, -1);
+                } else if (target.classList.contains('remove-item-btn')) {
+                    const productId = parseInt(target.dataset.id);
+                    removeItem(productId);
+                }
+            });
+
+            // Обробник для кнопки "Очистити кошик"
+            if (clearCartButton) {
+                clearCartButton.addEventListener('click', clearCart);
+            }
+        });
+    </script>
+</body>
+</html>
