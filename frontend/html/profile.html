@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мій кабінет - Зоомагазин "Амброзія"</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="../js/config.js"></script>
 </head>
 <body>
@@ -134,32 +136,46 @@
                 
                 // --- ЛОГІКА ДЛЯ ВІДОБРАЖЕННЯ ЗАМОВЛЕНЬ ---
                 if (data.orders && data.orders.length > 0) {
-                    ordersList.innerHTML = ''; // Очищаємо початкове повідомлення "Замовлень поки немає."
+                    ordersList.innerHTML = ''; // Clear initial message
                     data.orders.forEach(order => {
                         const orderDiv = document.createElement('div');
-                        orderDiv.classList.add('order-card'); // Додайте цей клас до вашого style.css для оформлення
+                        orderDiv.classList.add('order-card');
                         orderDiv.innerHTML = `
-                            <h4>Замовлення #${order.order_id}</h4>
-                            <p><strong>Дата:</strong> ${new Date(order.order_date).toLocaleDateString()} ${new Date(order.order_date).toLocaleTimeString()}</p>
-                            <p><strong>Загальна сума:</strong> ${order.total_amount ? order.total_amount.toFixed(2) : '0.00'} грн</p>
-                            <p><strong>Статус:</strong> ${order.status}</p>
-                            <p><strong>Адреса доставки:</strong> ${order.delivery_address || 'Не вказано'}</p>
-                            <p><strong>Телефон:</strong> ${order.contact_phone || 'Не вказано'}</p>
-                            <p><strong>Отримувач:</strong> ${order.customer_full_name || 'Не вказано'}</p>
-                            <h5>Товари в замовленні:</h5>
-                            <ul class="order-items-list">
-                                ${order.items && order.items.length > 0 ? order.items.map(item => `
-                                    <li>
-                                        ${item.image_url ? `<img src="${item.image_url}" alt="${item.product_name}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">` : ''}
-                                        ${item.product_name || 'Назва товару відсутня'} x ${item.quantity || 0} шт. (Ціна за 1: ${item.price_at_purchase ? item.price_at_purchase.toFixed(2) : '0.00'} грн)
-                                    </li>
-                                `).join('') : '<li>Немає товарів у цьому замовленні.</li>'}
-                            </ul>
+                            <div class="order-header">
+                                <h4>Замовлення #${order.order_id}</h4>
+                                <span class="order-date">${new Date(order.order_date).toLocaleDateString()}</span>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-info">
+                                    <p><i class="fas fa-money-bill"></i> Сума: ${order.total_amount ? (+order.total_amount).toFixed(2) : '0.00'} грн</p>
+                                    <p><i class="fas fa-info-circle"></i> Статус: <span class="status-badge">${order.status}</span></p>
+                                </div>
+                                <div class="delivery-info">
+                                    <p><i class="fas fa-map-marker-alt"></i> ${order.delivery_address || 'Адреса не вказана'}</p>
+                                    <p><i class="fas fa-phone"></i> ${order.contact_phone || 'Телефон не вказаний'}</p>
+                                    <p><i class="fas fa-user"></i> ${order.customer_full_name || 'Ім\'я не вказане'}</p>
+                                </div>
+                            </div>
+                            <div class="order-items">
+                                <h5>Товари в замовленні:</h5>
+                                <div class="items-grid">
+                                    ${order.items && order.items.length > 0 ? order.items.map(item => `
+                                        <div class="order-item">
+                                            ${item.image_url ? `<img src="${item.image_url}" alt="${item.product_name}" class="item-image">` : ''}
+                                            <div class="item-details">
+                                                <p class="item-name">${item.product_name || 'Назва товару відсутня'}</p>
+                                                <p class="item-quantity">Кількість: ${item.quantity || 0} шт.</p>
+                                                <p class="item-price">${item.price_at_purchase ? item.price_at_purchase.toFixed(2) : '0.00'} грн/шт.</p>
+                                            </div>
+                                        </div>
+                                    `).join('') : '<p class="no-items">Немає товарів у цьому замовленні.</p>'}
+                                </div>
+                            </div>
                         `;
                         ordersList.appendChild(orderDiv);
                     });
                 } else {
-                    ordersList.innerHTML = '<p>У вас поки немає замовлень.</p>';
+                    ordersList.innerHTML = '<div class="no-orders"><p>У вас поки немає замовлень.</p></div>';
                 }
                 // --- КІНЕЦЬ ЛОГІКИ ДЛЯ ВІДОБРАЖЕННЯ ЗАМОВЛЕНЬ ---
 
@@ -169,9 +185,7 @@
                 console.error('Помилка при завантаженні даних профілю або замовлень:', error);
                 loadingProfile.style.display = 'none';
                 errorProfile.style.display = 'block';
-                // Якщо завантаження з бек-енду не вдалося, базові дані з localStorage все одно будуть показані.
-                // Можна також очистити список замовлень, якщо виникла помилка під час їх завантаження.
-                ordersList.innerHTML = '<p>Не вдалося завантажити ваші замовлення.</p>'; 
+                ordersList.innerHTML = '<div class="no-orders"><p>Не вдалося завантажити ваші замовлення.</p></div>'; 
             }
         });
     </script>

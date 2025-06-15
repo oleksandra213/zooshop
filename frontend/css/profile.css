@@ -1,0 +1,134 @@
+/* Profile page styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Order card styles */
+.order-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.order-header h4 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.order-date {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.order-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.order-info, .delivery-info {
+    padding: 10px;
+}
+
+.order-info p, .delivery-info p {
+    margin: 8px 0;
+    color: #555;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #e3f2fd;
+    color: #1976d2;
+    font-size: 0.9em;
+}
+
+/* Order items styles */
+.order-items {
+    margin-top: 20px;
+}
+
+.order-items h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: 500;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.item-quantity, .item-price {
+    margin: 3px 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* No orders message */
+.no-orders {
+    text-align: center;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+/* Icons */
+.fas {
+    margin-right: 8px;
+    color: #666;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .order-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .items-grid {
+        grid-template-columns: 1fr;
+    }
+} 
